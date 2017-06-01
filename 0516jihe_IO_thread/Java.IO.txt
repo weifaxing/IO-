@@ -1,0 +1,165 @@
+
+1.IO的创建于逻辑判断
+
+	File file1=new File("xxx");--第一个file一定是一个文件
+	
+	File file1=new File("xxx");
+	File pfile=file1.getParentFile();--定义的是一个目录
+	
+	File file1=new File("xxx","xxx");
+	--两个参数，第一个参数是目录，第二个是文件
+	 
+	 
+	 File file=new File("xxx");
+	 //拿到目录
+	 File pfile=file.getParentFile();
+	 
+	 // exists() 测试此抽象路径名表示的文件或目录是否存在。
+	 if(!gfile.exists()){
+	 // mkdir() 创建此抽象路径名指定的目录
+			// mkdirs() 创建此抽象路径名指定的目录，包括所有必需但不存在的父目录
+	 	pfile.mkdirs();
+	 }
+	 try {
+			if(!file1.exists()){
+			// createNewFile() 当且仅当不存在具有此抽象路径名指定名称的文件时，
+			不可分地创建一个新的空文件。
+				file1.createNewFile();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+	 
+	 
+	 IO的输入输出流(文本、文字的交互)
+	 input---输入
+	 (1)Scanner--从键盘获取值--system.in
+	 (2)JTextField--Swing组件--桌面程序
+	 (3)Html--网页程序
+	 
+	 out---输出
+	 (1)system.out.println();
+	 
+	 
+	 File文件，目录：
+	 (1)文件流(输入输出)———操作程序--本机###在硬盘上，具体拥有的，电脑没电也存在
+	 FileInputStream/FileOutPutStream
+	 
+	 (2)网络流(网络环境)
+	 SocketInputStream/SocketOutputStream
+	 
+	 (3)内存流(字节流)###在内存上的，电脑没电不会存在
+	 ByteArrayInputStream/ByteArrayOutputStream
+	 
+	 
+	 文件流：
+	 	//最原始的文件流FileInputStream，只支持ASCII--byte(英语世界的)
+	 	FileInputStream in=new FileInputStream(file);
+	 	// 需要一个中间的变量装载，为了打印出来
+	 	out.write(65);	//65=A
+	 	
+	 	
+	 	//DataInputStream--支持编码，支持中文，支持int，支持float、double，long
+	 	DataInputStream doc = new DataInputStream(in);
+	 	//Data--基本数据类型的Stream包装类
+	 	//必须按文件输入的循环，反向的输出数据，必须按类型
+	 	
+	 	对象的输入输出：javabeen
+	 	//引用ObjectInputStream、objectoutputStream
+	 	
+	 	
+	 	IO的核心模式就是装饰模式
+	 	https://gof.quanke.name/%E6%89%A9%E5%B1%95
+	 	%E7%B3%BB%E7%BB%9F%E5%8A%9F%E8%83%BD%E2%80%94%E2%8
+	 	0%94%E8%A3%85%E9%A5%B0%E6%A8%A1%E5%BC%8F%EF%BC%88%E4
+	 	%B8%89%EF%BC%89.html
+	 	
+	 	
+	 	为了解决，一次读取一个字节的问题，IO流的设计者，提供了BufferedInputStream
+	 	的实现类。
+	 	
+	 	有黑边和滚动条的就是装饰模式
+	 	
+	 	FilterInputStream、FilterOutputStream
+	 	
+	 	儿子--BufferedInputStream、BufferedOutputStream
+	 	继承了FilterInputStream，实现了输入流处理中的缓冲的功能。底层的流会
+	 	先被读取到一个字节数组中
+	 	用户使用BufferedInputStream读取数据的时候，会先读取字节数组中的数据，读完了
+	 	才会调用底层的流进行进一步的读取。这种方法可以提升读取的性能。
+	 	
+	 	儿子--DataInputStream、DataOutputStream
+	 	这两个类继承了FilterInputStream、FilterOutputStream，用来
+	 	实现Java基本类型转换成二进制来进行读写操作，因此这两个类的
+	 	readUTF和writeUTF方法使用了一种特殊的UTF编解码方式，只能
+	 	用于Java程序，因此不建议在网络流或跨平台的应用中使用者两个类
+	 	
+	 	---------------------------------------------
+	 	ch8====out=new FileOutputStream(file);//ASCII码，只支持
+			BufferedOutputStream buff=new BufferedOutputStream(out);
+			DataOutputStream doc=new DataOutputStream(buff);
+			对于BufferedOutputStream包装过的IO流，需要通过flush和close才能把数据写出。
+	//(1)第一种把buffer的数据倒出来
+			//doc.close();//flush加关闭
+			doc.flush();//强制性把buffer里面缓冲的数据写出来
+
+com.hxzy1.ch8====
+java专门提供了	Properties p=new Properties();
+p.load(in);类，让我们可以使用，读取类似于map键值对的文件config.properties配置文件
+
+//中文，英文，法语，德语
+config_ch.properties
+name=力立
+address=五号空间
+
+config_eng.properties
+name=力立
+address=五号空间
+
+
+config_FR.properties
+config_GER.properties
+
+com.hxzy1.ch14_CachedFile======
+	/*数据库t_depts,部门的信息----缓存技术
+		 * 假设我需要读取一张表的信息，同时有100个人同时访问，
+		 * 每个人按之前完整的访问方式
+		 * （1）建立数据库链接connection
+		 * （2）createstatment
+		 * （3）resultset
+		 * （4）在内存中拼接成list
+		 * （5）在swing组件显示
+		 * 
+		 * 改进速度的方向：
+		 * （1）直接将查询的第一次结果存在缓存中
+		 * （2）以后每次别的100个人都访问这个缓存
+		 * 
+		 * */
+		
+		
+		/*修改步骤
+		 * （1）把t_depts表的数据查询出来
+		 * （2）循环赋值给对象Depts
+		 * （3）通过对象流输出存储成./data/t_dept.data
+		 
+		不管是集合，Dept对象，本质上都是对象，都可以用对象流来输出输入文件
+		（1）字节byte使用元素的InputStream就可以支持
+		（2）基本类型的使用DataInputStream就可以
+		（3）除此之外，所有的java的类型都是引用类型（对象），所以都可以使用对象流进行输入输出
+		java.io.Serializable---必须实现序列化
+		 * */
+com.hxzy1.ch15=====
+说明的是字节流如何构造，输入输出
+
+com.hxzy1.ch16=====
+在15的基础上，加入了基本类型的书写
+
+com.hxzy1.ch17=====
+	 	
+	 	
+	 	
+	 	
+	 	
+	 	
+	 
+	
